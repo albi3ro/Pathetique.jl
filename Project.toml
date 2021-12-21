@@ -1,0 +1,8 @@
+name = "Pathetique"
+uuid = "ccb82250-a568-43fd-8f6c-4b2335e32432"
+authors = ["albi3ro <chrissie.c.l@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
