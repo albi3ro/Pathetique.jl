@@ -2,51 +2,44 @@ module Execute
 export apply, execute
 
 using ..Pathetique
-using TensorOperations
+import TensorOperations.ncon
 
-function num_qubits(circ::Circuit)::Int8
+function max_qubit(circ::Circuit)::Int8
     n_qubits = 0
     for op in circ
-        n_qubits = max(n_qubits, maximum(op.qubits))
-        if op isa Controlled
-           n_qubits = max(n_qubits, maximum(op.base.qubits)) 
-        end
+        n_qubits = max(n_qubits, maximum(qubits(op)))
     end
     return n_qubits
 end
 
-function apply(state::Array{ComplexF64}, op::Operation, circ_num_qubits::Int8)::Array{ComplexF64}
+function apply(state::Array{T}, op::Operation, circ_num_qubits::Int8)::Array{T} where {T<:Complex}
 
-    if op isa Controlled
-        qubits = cat(op.qubits, op.base.qubits, dims=1)
-    else
-        qubits = op.qubits
-    end
+    op_qubits = qubits(op)
 
     state_indices = -collect(1:circ_num_qubits)
-    op_indices = cat(zeros(Int, length(qubits)), (1:length(qubits)), dims=1)
+    op_indices = cat(zeros(Int, length(op_qubits)), (1:length(op_qubits)), dims=1)
 
-    for (i, w) in enumerate(reverse(qubits))
+    for (i, w) in enumerate(reverse(op_qubits))
         state_indices[w] = i
         op_indices[i] = -w
     end
 
-    matr = reshape(matrix(op), repeat([2], 2*length(qubits))...)
+    matr = reshape(matrix(op), repeat([2], 2*length(op_qubits))...)
 
     return ncon((matr, state), (op_indices, state_indices))
 end
 
-function execute(circ::Circuit)::Array{ComplexF64}
-    circ_num_qubits = num_qubits(circ)
+function execute(circ::Circuit, ::Type{T}=ComplexF64)::Array{T} where {T<:Complex}
+    circ_num_qubits = max_qubit(circ)
 
-    state = zeros(Complex{Float64}, repeat([2], circ_num_qubits)...)
+    state = zeros(T, repeat([2], circ_num_qubits)...)
     state[1] = 1.0
 
     for op in circ
         state = apply(state, op, circ_num_qubits)
     end
 
-    return state
+    return state[:]
 end
 
 end
