@@ -2,8 +2,12 @@ module Pathetique
 
 include("Gates.jl")
 using .Gates
-export Operation, X, Y, Z, RX, RY, RZ, IsingXX, IsingYY, IsingZZ
-export Controlled, adjoint, qubits, SingleQubitOp
+export Operation, I, X, Y, Z, RX, RY, RZ, IsingXX, IsingYY, IsingZZ
+export Controlled, qubits, SingleQubitOp
+
+include("Arithmetic.jl")
+using .Arithmetic
+export adjoint, ^, sqrt, inv
 
 include("Matrices.jl")
 using .Matrices

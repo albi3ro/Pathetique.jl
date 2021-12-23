@@ -15,7 +15,7 @@ function print_vector(v::AbstractVector)
     return str *= "]"
 end
 
-function show(io::IO, op::Pathetique.Gates.Adjoint)
+function show(io::IO, op::Pathetique.Arithmetic.Adjoint)
     print(io, "$(op.base)'")
 end
 

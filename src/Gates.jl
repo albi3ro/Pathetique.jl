@@ -1,6 +1,6 @@
 module Gates
-export Operation, X, Y, Z, RX, RY, RZ, IsingXX, IsingYY, IsingZZ
-export Controlled, adjoint, qubits, SingleQubitOp
+export Operation, I, X, Y, Z, RX, RY, RZ, IsingXX, IsingYY, IsingZZ
+export Controlled, qubits, SingleQubitOp
 abstract type Operation end
 
 function qubits(op::Operation)
@@ -8,6 +8,12 @@ function qubits(op::Operation)
 end
 
 #################### SINGLE QUBIT OPS ###############################
+
+"""
+An identity gate
+"""
+struct I <: Operation
+end
 
 """
 A Pauli X gate
@@ -54,7 +60,11 @@ struct RZ <: Operation
     qubits:: Int8
 end
 
-SingleQubitOp = Union{X, Y, Z, RX, RY, RZ}
+SingleQubitOp = Union{I, X, Y, Z, RX, RY, RZ}
+
+function qubits(op::I)::Vector{Int8}
+    return Int8[]
+end
 
 function qubits(op::SingleQubitOp)::Vector{Int8}
     return [op.qubits]
@@ -89,6 +99,7 @@ struct Controlled <: Operation
     base:: Operation
     qubits:: Vector{Int8}
 
+    Controlled(base::I, qubits) = I()
     Controlled(base::Operation, qubits::Vector{Int}) = new(base, qubits)
     Controlled(base::Operation, qubits::Int) = new(base, [qubits])
 end
@@ -97,23 +108,5 @@ function qubits(op::Controlled)::Vector{Int8}
     return vcat(op.qubits, qubits(op.base))
 end
 
-
-import Base.adjoint
-
-"""
-An adjointed gate
-"""
-struct Adjoint <: Operation
-    base:: Operation
-end
-
-"""Constructor for the `Adjoint` class"""
-adjoint(op::Operation) = Adjoint(op)
-
-adjoint(op::Union{X, Y, Z}) = op
-
-function qubits(op::Adjoint)::Vector{Int8}
-    return qubits(op.base)
-end
 
 end

@@ -29,6 +29,10 @@ function apply(state::Array{T}, op::Operation, circ_num_qubits::Int8)::Array{T} 
     return ncon((matr, state), (op_indices, state_indices))
 end
 
+function apply(state::Array{T}, op::I, circ_num_qubits::Int8)::Array{T} where {T<:Complex}
+    return state
+end
+
 function execute(circ::Circuit, ::Type{T}=ComplexF64)::Array{T} where {T<:Complex}
     circ_num_qubits = max_qubit(circ)
 

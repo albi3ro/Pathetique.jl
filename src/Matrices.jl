@@ -2,7 +2,7 @@ module Matrices
 export matrix
 
 using ..Pathetique
-using LinearAlgebra
+import LinearAlgebra
 
 x_mat = [0 1; 1 0]
 y_mat = [0 -1im; 1im 0]
@@ -24,14 +24,14 @@ function matrix(op::Controlled)::Matrix{ComplexF64}
     n_control = 2^length(op.qubits)
     n_target = 2^length(qubits(op.base))
 
-    mat = Matrix{ComplexF64}(1I, n_control+n_target, n_control+n_target)
+    mat = Matrix{ComplexF64}(LinearAlgebra.I, n_control+n_target, n_control+n_target)
 
     target_locs = (n_control+1):(n_control+n_target)
     mat[target_locs, target_locs] = matrix(op.base)
     return mat
 end
 
-function matrix(op::Pathetique.Gates.Adjoint)::Matrix{ComplexF64}
+function matrix(op::Pathetique.Arithmetic.Adjoint)::Matrix{ComplexF64}
     return adjoint(matrix(op.base))
 end
 
